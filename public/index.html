@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResuScan AI - Portal Login</title>
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Blur Elements -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ================= AUTH SECTION ================= -->
+  <section id="auth-section" class="auth-section">
+    <div class="auth-container glass-card">
+      <div class="auth-header">
+        <div class="logo">
+          <i class="fa-solid fa-wand-magic-sparkles brand-icon"></i>
+          <h1>ResuScan <span>AI</span></h1>
+        </div>
+        <p class="subtitle">AI-Powered Resume Evaluation System</p>
+      </div>
+
+      <!-- Auth Tabs -->
+      <div class="auth-tabs">
+        <button id="tab-login" class="auth-tab active">Login</button>
+        <button id="tab-register" class="auth-tab">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email"><i class="fa-regular fa-envelope"></i> Email Address</label>
+          <input type="email" id="login-email" required placeholder="name@company.com">
+        </div>
+        <div class="form-group">
+          <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+          <input type="password" id="login-password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Sign In</span> <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+      </form>
+
+      <!-- Register Form (Initially Hidden) -->
+      <form id="register-form" class="auth-form hidden">
+        <div class="form-group">
+          <label for="reg-name"><i class="fa-regular fa-user"></i> Full Name</label>
+          <input type="text" id="reg-name" required placeholder="Alex Mercer">
+        </div>
+        <div class="form-group">
+          <label for="reg-email"><i class="fa-regular fa-envelope"></i> Email Address</label>
+          <input type="email" id="reg-email" required placeholder="alex@company.com">
+        </div>
+        <div class="form-group">
+          <label for="reg-password"><i class="fa-solid fa-lock"></i> Password (min. 8 chars)</label>
+          <input type="password" id="reg-password" required minlength="8" placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Create Account</span> <i class="fa-solid fa-user-plus"></i>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Login/Register Page script -->
+  <script src="auth.js"></script>
+</body>
+</html>

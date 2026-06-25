@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResuScan AI - Dashboard</title>
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Glow Elements -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ================= DASHBOARD LAYOUT ================= -->
+  <section id="dashboard-section" class="dashboard-section">
+    <!-- Sidebar -->
+    <aside class="sidebar glass-card">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fa-solid fa-wand-magic-sparkles brand-icon"></i>
+          <h2>ResuScan <span>AI</span></h2>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" id="nav-screen" class="nav-item active">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Screen Resume</span>
+        </a>
+        <a href="#" id="nav-results" class="nav-item">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>Past Screenings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="avatar">
+            <i class="fa-regular fa-circle-user"></i>
+          </div>
+          <div class="user-details">
+            <h4 id="user-display-name">Loading...</h4>
+            <span class="badge badge-role">Recruiter</span>
+          </div>
+        </div>
+        <button id="logout-btn" class="btn btn-outline btn-block btn-logout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Log Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top header bar -->
+      <header class="content-header">
+        <div class="header-title">
+          <h1 id="screen-title">Screen Resume</h1>
+          <p id="screen-subtitle">Evaluate a candidate's resume PDF against a target job description</p>
+        </div>
+      </header>
+
+      <!-- SCREEN: Screening Console (Root Dashboard) -->
+      <div id="screening-screen" class="dashboard-screen active-screen">
+        <div class="metrics-grid">
+          <div class="metric-card glass-card">
+            <div class="metric-icon metric-purple"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="metric-value" id="stat-results-count">0</div>
+            <div class="metric-label">Total Screened</div>
+          </div>
+          <div class="metric-card glass-card">
+            <div class="metric-icon metric-blue"><i class="fa-solid fa-gauge-high"></i></div>
+            <div class="metric-value" id="stat-avg-score">0%</div>
+            <div class="metric-label">Average Match</div>
+          </div>
+          <div class="metric-card glass-card">
+            <div class="metric-icon metric-green"><i class="fa-solid fa-star"></i></div>
+            <div class="metric-value" id="stat-strong-count">0</div>
+            <div class="metric-label">High Matches (>=80%)</div>
+          </div>
+        </div>
+
+        <div class="screening-panel">
+          <!-- Left Panel: Job Description input -->
+          <div class="jd-section glass-card">
+            <h3><i class="fa-solid fa-align-left text-blue"></i> Target Job Description</h3>
+            <p class="text-muted mb-4">Paste the requirements or description details for the role below</p>
+            <div class="form-group">
+              <textarea id="jd-input" rows="12" placeholder="e.g. We are looking for a Senior Node.js developer with experience in Express, Mongoose, and JWT authentication. Knowledge of Docker and Redis is preferred..."></textarea>
+            </div>
+          </div>
+
+          <!-- Right Panel: Resume PDF upload & progress -->
+          <div class="upload-section glass-card">
+            <h3><i class="fa-solid fa-file-pdf text-purple"></i> Candidate Resume</h3>
+            <p class="text-muted">Upload resume PDF file (Max 5MB)</p>
+
+            <div id="dropzone" class="dropzone">
+              <input type="file" id="file-input" accept="application/pdf" class="hidden">
+              <div class="dropzone-content">
+                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                <p class="dropzone-text">Drag & drop resume PDF here or <span class="highlight">browse files</span></p>
+              </div>
+            </div>
+
+            <!-- Upload progress bar & animation -->
+            <div id="upload-progress-container" class="upload-progress-container hidden">
+              <div class="progress-info">
+                <span id="upload-status-text">Uploading and AI Screening...</span>
+                <span id="progress-percent">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+              </div>
+              <!-- Pulse scanning loader -->
+              <div class="scanning-animation-container">
+                <div class="pulse-ring"></div>
+                <p class="scanning-hint"><i class="fa-solid fa-wand-magic-sparkles"></i> AI is screening with OpenAI GPT...</p>
+              </div>
+            </div>
+
+            <button id="screen-btn" class="btn btn-primary btn-block mt-4">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Analyze Resume</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN: Past Screenings list -->
+      <div id="results-screen" class="dashboard-screen hidden">
+        <div class="section-card glass-card">
+          <div class="section-header">
+            <h3>Past Screening Results</h3>
+            <div class="search-bar">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="result-search" placeholder="Search by description keywords...">
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="resumes-table">
+              <thead>
+                <tr>
+                  <th>Job Description Target</th>
+                  <th>Match Score</th>
+                  <th>Date Screened</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="results-list-body">
+                <!-- Screening rows will be injected dynamically -->
+              </tbody>
+            </table>
+            <div class="empty-state hidden" id="results-empty-state">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <p>No screening evaluations found. Run a screen above to get started!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ================= MODAL: SCREENING REPORT DETAILS ================= -->
+  <div id="candidate-modal" class="modal-backdrop hidden">
+    <div class="modal-card glass-card modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-with-badge">
+          <h3 id="modal-candidate-name">Screening Evaluation</h3>
+          <span id="modal-candidate-recommendation" class="badge">Success</span>
+        </div>
+        <button class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="candidate-modal-content">
+        <!-- Score & Overview -->
+        <div class="candidate-overview-card mb-4">
+          <div class="score-circle-container">
+            <div class="score-circle">
+              <span id="modal-candidate-score">0%</span>
+              <span class="score-label">Match Score</span>
+            </div>
+          </div>
+          <div class="candidate-contact-details" style="flex-grow: 1;">
+            <h4 style="color:var(--text-primary); margin-bottom:8px;">AI Evaluation Summary</h4>
+            <p id="modal-candidate-summary" style="line-height:1.5; font-size:0.92rem;">Analysis details...</p>
+          </div>
+        </div>
+
+        <!-- Detail Gaps Grid -->
+        <div class="candidate-detail-grid">
+          <!-- Strengths -->
+          <div class="evaluation-panel strengths-panel glass-card">
+            <h4><i class="fa-solid fa-circle-check text-green"></i> Key Strengths Matched</h4>
+            <ul id="modal-candidate-strengths">
+              <!-- Strengths bullets -->
+            </ul>
+          </div>
+
+          <!-- Gaps & Missing Skills -->
+          <div class="evaluation-panel missing-panel glass-card">
+            <h4><i class="fa-solid fa-circle-exclamation text-orange"></i> Missing Skills & Gaps</h4>
+            <ul id="modal-candidate-missing">
+              <!-- Missing skills bullets -->
+            </ul>
+          </div>
+
+          <!-- Suggestions -->
+          <div class="evaluation-panel suggestions-panel glass-card" style="grid-column: 1 / -1; margin-top: 10px;">
+            <h4><i class="fa-solid fa-wand-magic-sparkles text-purple"></i> AI Improvement Recommendations</h4>
+            <ul id="modal-candidate-suggestions">
+              <!-- Suggestions bullets -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Pasted Job Description snippet -->
+        <div class="info-block glass-card mt-4">
+          <h4 style="margin-bottom:8px;"><i class="fa-solid fa-align-left text-blue"></i> Targeted Job Description</h4>
+          <p id="modal-job-description" style="font-style: italic; opacity:0.8; max-height: 120px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.1); border-radius: 6px;"></p>
+        </div>
+      </div>
+
+      <div class="modal-footer justify-between">
+        <div>
+          <button id="delete-result-btn" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Delete Evaluation</button>
+        </div>
+        <div>
+          <button type="button" class="btn btn-outline btn-sm close-modal-btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Page script -->
+  <script src="dashboard.js"></script>
+</body>
+</html>
