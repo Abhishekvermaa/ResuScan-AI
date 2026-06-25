@@ -12,8 +12,10 @@ exports.register = async (req, res, next) => {
       return res.status(400).json({ error: 'All fields are required and cannot be empty' });
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     // Check if user exists
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
       return res.status(400).json({ error: 'User already exists' });
     }
@@ -21,7 +23,7 @@ exports.register = async (req, res, next) => {
     // Create user
     const user = await User.create({
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       password: password,
     });
 
