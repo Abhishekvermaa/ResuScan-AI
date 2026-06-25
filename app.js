@@ -12,6 +12,18 @@ const resultRoutes = require('./routes/resultRoutes');
 
 const app = express();
 
+// Trust reverse proxy for rate limiting (Render, Heroku, etc.)
+app.set('trust proxy', 1);
+
+// Native security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://generativelanguage.googleapis.com");
+  next();
+});
+
 // Enable CORS
 app.use(cors());
 
@@ -84,8 +96,11 @@ app.use((err, req, res, next) => {
     return res.status(400).json({ error: 'Duplicate field value entered' });
   }
 
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error',
+  const statusCode = err.status || 500;
+  const isDev = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+  
+  res.status(statusCode).json({
+    error: statusCode < 500 || isDev ? err.message : 'Internal Server Error',
   });
 });
 

@@ -72,6 +72,17 @@ function showToast(message, type = 'success') {
   }, 3000);
 }
 
+// ================= HTML ESCAPER FOR XSS PREVENTION =================
+function escapeHTML(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // ================= API CALL HELPER =================
 async function apiCall(endpoint, method = 'GET', body = null, isMultipart = false) {
   const headers = {};
@@ -202,7 +213,7 @@ function renderResults(resultsList) {
       : result.jobDescription;
 
     row.innerHTML = `
-      <td><span style="font-size:0.9rem; opacity:0.95">${jdSnippet}</span></td>
+      <td><span style="font-size:0.9rem; opacity:0.95">${escapeHTML(jdSnippet)}</span></td>
       <td><span class="score-badge ${scoreColor}">${result.matchScore}%</span></td>
       <td>${new Date(result.createdAt).toLocaleDateString()}</td>
       <td class="text-right">
@@ -268,7 +279,7 @@ function selectFile(file) {
     return;
   }
   state.selectedFile = file;
-  elements.dropzone.querySelector('.dropzone-text').innerHTML = `Selected File: <span class="highlight" style="color:var(--green)">${file.name}</span>`;
+  elements.dropzone.querySelector('.dropzone-text').innerHTML = `Selected File: <span class="highlight" style="color:var(--green)">${escapeHTML(file.name)}</span>`;
 }
 
 // Action Button Submit
