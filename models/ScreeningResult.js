@@ -5,6 +5,7 @@ const ScreeningResultSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'User reference is required'],
+    index: true,
   },
   jobDescription: {
     type: String,
