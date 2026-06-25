@@ -2,6 +2,8 @@
 
 ResuScan AI is a modern web application designed to help recruiters and hiring managers efficiently screen candidate resumes against job descriptions. Powered by Google Gemini AI, the system parses PDF resumes, compares candidate profiles to specific job qualifications, and provides key metrics, including a match score, strengths list, missing requirements, and improvement suggestions.
 
+**Live Application Link:** [https://resuscan-ai.onrender.com](https://resuscan-ai.onrender.com)
+
 ---
 
 ## Features
